@@ -2,6 +2,7 @@
 
 #include "game.h"
 #include "field.h"
+#include "snake.h"
 
 int Game_init(Game* game)
 {
@@ -26,8 +27,11 @@ int Game_init(Game* game)
 	if (!game->rer) return 1;
 
 	game->run = 1;
+	game->cell_size = 40;
+	game->cell_offset = game->cell_size / 5;
+
 	Game_init_field(game);
-	game->cell_offset = game->field.cell_size / 8;
+	Game_init_snake(game);
 
 	return 0;
 }
@@ -47,18 +51,34 @@ int Game_process_events(Game* game)
 		switch (ev.type)
 		{
 		case SDL_QUIT: Game_uninit(game); break;
+		case SDL_KEYDOWN:
+		{
+			Game_give_snake_direction(game, ev.key.keysym.scancode);
+		} break;
 		}
-		Game_draw_field(game, 0, 0, GAME_WIDTH, GAME_HEIGHT);
-		SDL_RenderPresent(game->rer);
 	}
+}
+
+void Game_update(Game* game)
+{
+	SDL_UpdateWindowSurface(game->win);
+	Game_process_events(game);
+	Game_move_snake(game);
+}
+
+void Game_draw(Game* game)
+{
+	Game_draw_field(game, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+	Game_draw_snake(game);
+	SDL_RenderPresent(game->rer);
 }
 
 int Game_run(Game* game)
 {
 	while (game->run)
 	{
-		SDL_UpdateWindowSurface(game->win);
-		Game_process_events(game);
+		Game_update(game);
+		Game_draw(game);
 	}
 	Game_uninit(game);
 	return 0;

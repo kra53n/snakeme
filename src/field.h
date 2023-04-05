@@ -11,7 +11,6 @@ typedef struct
 
 typedef struct
 {
-	int   cell_size;
 	Color color1; // foreground color
 	Color color2; // shadow of color1
 	Color color3; // background color

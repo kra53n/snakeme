@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "field.h"
+#include "snake.h"
 
 #define GAME_TITLE  "snakeme | snake game"
 #define GAME_WIDTH  1280
@@ -14,8 +15,11 @@ typedef struct
 	SDL_Surface*  surf;
 	SDL_Renderer* rer;
 	int           run;
-	Field         field;
+	int           cell_size;
 	int           cell_offset;
+	Field         field;
+	Snake         snake;
+
 } Game;
 
 int Game_init(Game* game);
