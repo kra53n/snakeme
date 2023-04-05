@@ -16,17 +16,15 @@ void Game_init_field(Game* game)
 
 	c.r = 30; c.g = 32; c.b = 41;
 	game->field.color3 = c;
-
-	game->field.cell_size = 40;
 }
 
 void Game_draw_row(Game* game, int x, int y, int w)
 {
-	SDL_Rect r = { x, y, game->field.cell_size, game->field.cell_size };
-	for (int i = x / game->field.cell_size; i <= w / game->field.cell_size; i++)
+	SDL_Rect r = { x, y, game->cell_size, game->cell_size };
+	for (int i = x / game->cell_size; i <= w / game->cell_size; i++)
 	{
 		if (i % 2 == 0) continue;
-		r.x = x + i * game->field.cell_size - game->field.cell_size;
+		r.x = x + i * game->cell_size - game->cell_size;
 		SDL_RenderFillRect(game->rer, &r);
 	}
 	SDL_RenderFillRect(game->rer, &r);
@@ -34,12 +32,12 @@ void Game_draw_row(Game* game, int x, int y, int w)
 
 void Game_draw_cells(Game* game, int x, int y, int w, int h)
 {
-	for (int j = y / game->field.cell_size; j <= h / game->field.cell_size; j++)
+	for (int j = y / game->cell_size; j <= h / game->cell_size; j++)
 	{
 		Game_draw_row(
 			game,
-			((j % 2 == 0) * game->field.cell_size) + x,
-			j * game->field.cell_size + y,
+			((j % 2 == 0) * game->cell_size) + x,
+			j * game->cell_size + y,
 			w
 		);
 	}
