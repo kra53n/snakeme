@@ -23,7 +23,7 @@ int Game_init(Game* game)
 	);
 	if (!game->win) return 1;
 
-	game->rer = SDL_CreateRenderer(game->win, -1, 0);
+	game->rer = SDL_CreateRenderer(game->win, -1, SDL_RENDERER_ACCELERATED);
 	if (!game->rer) return 1;
 
 	game->run = 1;
@@ -54,6 +54,7 @@ int Game_process_events(Game* game)
 		case SDL_KEYDOWN:
 		{
 			Game_give_snake_direction(game, ev.key.keysym.scancode);
+			Game_increase_snake(game);
 		} break;
 		}
 	}

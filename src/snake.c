@@ -1,3 +1,5 @@
+#include <malloc.h>
+
 #include "game.h"
 #include "snake.h"
 
@@ -17,12 +19,16 @@ void Game_init_snake(Game* game)
 	SDL_Point p = { GAME_WIDTH / 2 - game->cell_size, GAME_HEIGHT / 2 - game->cell_size };
 	game->snake.head = p;
 
+	game->snake.body.head = NULL;
+	game->snake.body.tail = NULL;
+
 	game->snake.up    = SDL_SCANCODE_W;
 	game->snake.down  = SDL_SCANCODE_S;
 	game->snake.left  = SDL_SCANCODE_A;
 	game->snake.right = SDL_SCANCODE_D;
 
 	game->snake.last_update = SDL_GetTicks();
+	game->snake.was_increased = 0;
 }
 
 void Game_draw_snake(Game* game)
@@ -38,6 +44,13 @@ void Game_draw_snake(Game* game)
 
 	SDL_SetRenderDrawColor(game->rer, give_color(game->snake.color1));
 	SDL_RenderFillRect(game->rer, &r);
+
+	for (SnakeBodyElem* i = game->snake.body.head; i; i = i->nxt)
+	{
+		r.x = i->p.x;
+		r.y = i->p.y;
+		SDL_RenderFillRect(game->rer, &r);
+	}
 }
 
 void Game_give_snake_direction(Game* game, int scancode)
@@ -48,16 +61,77 @@ void Game_give_snake_direction(Game* game, int scancode)
 	else if (game->snake.right == scancode) game->snake.direction = SNAKE_RIGHT;
 }
 
+void Game_move_snake_cell(Game* game, SDL_Point* cell)
+{
+	switch (game->snake.direction)
+	{
+	case SNAKE_UP:    cell->y -= game->cell_size; break;
+	case SNAKE_DOWN:  cell->y += game->cell_size; break;
+	case SNAKE_LEFT:  cell->x -= game->cell_size; break;
+	case SNAKE_RIGHT: cell->x += game->cell_size; break;
+	}
+}
+
+void Game_increase_snake(Game* game)
+{
+	SnakeBodyElem* tmp = (SnakeBodyElem*)malloc(sizeof(SnakeBodyElem));
+	tmp->p = game->snake.head;
+	SnakeBodyElem* head = game->snake.body.head;
+	SnakeBodyElem* tail = game->snake.body.tail;
+
+	if (head == tail)
+	{
+		if (head == NULL)
+		{
+			tmp->nxt = NULL;
+			tmp->prv = NULL;
+			head = tail = tmp;
+		}
+		else
+		{
+			tmp->nxt = tail;
+			tmp->prv = NULL;
+			head = tmp;
+		}
+	}
+	else
+	{
+		tmp->nxt = head;
+		tmp->prv = NULL;
+		head->prv = tmp;
+		head = tmp;
+	}
+
+	game->snake.body.head = head;
+	game->snake.body.tail = tail;
+}
+
+void Game_decrease_snake(Game* game)
+{
+	if (!game->snake.body.tail) return;
+	SnakeBodyElem* tmp = game->snake.body.tail->prv;
+	free(game->snake.body.tail);
+	if (tmp) tmp->nxt = NULL;
+	game->snake.body.tail = tmp;
+}
+
 void Game_move_snake(Game* game)
 {
 	if (SDL_GetTicks() - game->snake.last_update <= 100) return;
 	game->snake.last_update = SDL_GetTicks();
 
-	switch (game->snake.direction)
+	Game_move_snake_cell(game, &game->snake.head);
+
+	if (game->snake.was_increased)
 	{
-	case SNAKE_UP:    game->snake.head.y -= game->cell_size; break;
-	case SNAKE_DOWN:  game->snake.head.y += game->cell_size; break;
-	case SNAKE_LEFT:  game->snake.head.x -= game->cell_size; break;
-	case SNAKE_RIGHT: game->snake.head.x += game->cell_size; break;
+		game->snake.was_increased = 0;
+		return;
 	}
+
+	for (SnakeBodyElem* i = game->snake.body.head; i; i = i->nxt)
+	{
+		Game_move_snake_cell(game, &i->p);
+	}
+	//Game_decrease_snake(game);
 }
+
