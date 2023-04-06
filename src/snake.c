@@ -16,19 +16,13 @@ void Game_init_snake(Game* game)
 	c.r = 111; c.g = 163; c.b = 65;
 	game->snake.color3 = c;
 
-	SDL_Point p = { GAME_WIDTH / 2 - game->cell_size, GAME_HEIGHT / 2 - game->cell_size };
-	game->snake.head = p;
-
-	game->snake.body = NULL;
-
 	game->snake.up    = SDL_SCANCODE_W;
 	game->snake.down  = SDL_SCANCODE_S;
 	game->snake.left  = SDL_SCANCODE_A;
 	game->snake.right = SDL_SCANCODE_D;
 
-	game->snake.last_update = SDL_GetTicks();
-	game->snake.was_increased = 0;
-	game->snake.is_died = 0;
+	game->snake.body = NULL;
+	Game_spawn_snake(game);
 }
 
 void Game_draw_body(Game* game, int offset_x, int offset_y)
@@ -109,6 +103,14 @@ void Game_decrease_snake(Game* game)
 
 void Game_update_snake_death_satus(Game* game)
 {
+	SDL_Rect r = { game->snake.head.x, game->snake.head.y, game->cell_size, game->cell_size };
+	SDL_Rect screen = { 0, 0, GAME_WIDTH, GAME_HEIGHT };
+	if (!SDL_HasIntersection(&screen, &r))
+	{
+		game->snake.is_died = 1;
+		return;
+	}
+
 	if (!game->snake.body) return;
 
 	for (SnakeBodyElem* i = game->snake.body; i; i = i->nxt)
@@ -142,7 +144,23 @@ void Game_move_snake(Game* game)
 		i->p = to_cell;
 		to_cell = tmp;
 	}
-	Game_increase_snake(game);
-	Game_decrease_snake(game);
 }
 
+
+void Game_spawn_snake(Game* game)
+{
+	SDL_Point p = { GAME_WIDTH / 2 - game->cell_size, GAME_HEIGHT / 2 - game->cell_size };
+	game->snake.head = p;
+
+	while (game->snake.body)
+	{
+		SnakeBodyElem* tmp = game->snake.body->nxt;
+		free(game->snake.body);
+		game->snake.body = tmp;
+	}
+	game->snake.body = NULL;
+
+	game->snake.last_update = SDL_GetTicks();
+	game->snake.was_increased = 0;
+	game->snake.is_died = 0;
+}

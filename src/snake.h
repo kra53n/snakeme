@@ -39,3 +39,4 @@ void Game_draw_snake(Game_1* game);
 void Game_give_snake_direction(Game_1* game, int scancode);
 void Game_move_snake(Game_1* game);
 void Game_increase_snake(Game_1* game);
+void Game_spawn_snake(Game_1* game);

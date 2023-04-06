@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "field.h"
+#include "fruit.h"
 #include "snake.h"
 
 #define GAME_TITLE  "snakeme | snake game"
@@ -15,10 +16,12 @@ typedef struct
 	SDL_Surface*  surf;
 	SDL_Renderer* rer;
 	int           run;
+	int           wait_restarting;
 	int           cell_size;
 	int           cell_offset;
 	Field         field;
 	Snake         snake;
+	Fruit         fruit;
 
 } Game;
 

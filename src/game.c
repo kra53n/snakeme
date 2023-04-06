@@ -1,11 +1,15 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "game.h"
 #include "field.h"
 #include "snake.h"
+#include "fruit.h"
 
 int Game_init(Game* game)
 {
+	srand(time());
+
 	int status;
 
 	if (status = SDL_Init(SDL_INIT_EVERYTHING))
@@ -27,20 +31,23 @@ int Game_init(Game* game)
 	if (!game->rer) return 1;
 
 	game->run = 1;
+	game->wait_restarting = 0;
 	game->cell_size = 40;
 	game->cell_offset = game->cell_size / 5;
 
 	Game_init_field(game);
 	Game_init_snake(game);
+	Game_spawn_fruit(game);
 
 	return 0;
 }
 
 int Game_uninit(Game* game)
 {
+	SDL_DestroyRenderer(game->rer);
 	SDL_DestroyWindow(game->win);
 	SDL_Quit();
-	return 0;
+	exit(0);
 }
 
 int Game_process_events(Game* game)
@@ -54,8 +61,16 @@ int Game_process_events(Game* game)
 		case SDL_KEYDOWN:
 		{
 			Game_give_snake_direction(game, ev.key.keysym.scancode);
-			Game_increase_snake(game);
-		} break;
+			switch (ev.key.keysym.scancode)
+			{
+			case SDL_SCANCODE_R:
+			{
+				game->wait_restarting = 0;
+				Game_spawn_snake(game);
+				Game_spawn_fruit(game);
+			} break;
+			} break;
+		}
 		}
 	}
 }
@@ -64,12 +79,23 @@ void Game_update(Game* game)
 {
 	SDL_UpdateWindowSurface(game->win);
 	Game_process_events(game);
+
+	if (game->wait_restarting) return;
+
 	Game_move_snake(game);
+	Game_eat_fruit(game);
+
+	if (game->snake.is_died)
+	{
+		game->wait_restarting = 1;
+		game->snake.is_died = 0;
+	}
 }
 
 void Game_draw(Game* game)
 {
 	Game_draw_field(game, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+	Game_draw_fruit(game);
 	Game_draw_snake(game);
 	SDL_RenderPresent(game->rer);
 }
