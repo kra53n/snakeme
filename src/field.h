@@ -2,6 +2,8 @@
 
 #include "color.h"
 
+#define FIELD_MAX_BORDER_NUM 4
+
 typedef struct
 {
 	int   x;
@@ -11,9 +13,18 @@ typedef struct
 
 typedef struct
 {
-	Color color1; // foreground color
-	Color color2; // shadow of color1
-	Color color3; // background color
+	Color      color1; // foreground color
+	Color      color2; // shadow color
+	SDL_Point* coords;
+	int        num;
+} Borders;
+
+typedef struct
+{
+	Color   color1; // foreground color
+	Color   color2; // shadow of color1
+	Color   color3; // background color
+	Borders borders;
 } Field;
 
 typedef struct Game Game_1;

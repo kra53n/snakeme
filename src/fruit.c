@@ -7,7 +7,6 @@ void Game_spawn_fruit(Game* game)
 {
 	game->fruit.p.x = rand() % (GAME_WIDTH  / game->cell_size) * game->cell_size;
 	game->fruit.p.y = rand() % (GAME_HEIGHT / game->cell_size) * game->cell_size;
-	game->fruit.p.x = rand() % (GAME_WIDTH  / game->cell_size) * game->cell_size;
 
 	// TODO: check collision with snake
 }

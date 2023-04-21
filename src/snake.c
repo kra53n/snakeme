@@ -136,6 +136,15 @@ void Game_update_snake_death_satus(Game* game)
 		return;
 	}
 
+	for (int i = 0; i < game->field.borders.num; i++)
+	{
+		SDL_Point p = { game->field.borders.coords[i].x, game->field.borders.coords[i].y };
+		int cond = p.x == game->snake.head.x && p.y == game->snake.head.y;
+		if (!cond) continue;
+		game->snake.is_died = 1;
+		break;
+	}
+
 	if (!game->snake.body) return;
 
 	for (SnakeBodyElem* i = game->snake.body; i; i = i->nxt)

@@ -68,6 +68,7 @@ int Game_process_events(Game* game)
 				game->wait_restarting = 0;
 				Game_spawn_snake(game);
 				Game_spawn_fruit(game);
+				Game_restart_field(game);
 			} break;
 			} break;
 		}
