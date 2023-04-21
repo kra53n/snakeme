@@ -102,6 +102,8 @@ void Game_draw(Game* game)
 
 int Game_run(Game* game)
 {
+	int fps_start_ticks = SDL_GetTicks();
+
 	while (game->run)
 	{
 		Game_update(game);

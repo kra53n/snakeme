@@ -13,7 +13,6 @@
 typedef struct
 {
 	SDL_Window*   win;
-	SDL_Surface*  surf;
 	SDL_Renderer* rer;
 	int           run;
 	int           wait_restarting;

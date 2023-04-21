@@ -56,12 +56,37 @@ void Game_draw_snake(Game* game)
 
 }
 
+int Game_snake_possible_to_move(Game* game, int supposed_direction)
+{
+	if (!game->snake.body) return 1;
+
+	int dx = game->snake.head.x - game->snake.body->p.x;
+	int dy = game->snake.head.y - game->snake.body->p.y;
+
+	switch (supposed_direction)
+	{
+	case SNAKE_UP:    if (dy > 0) return 0; break;
+	case SNAKE_DOWN:  if (dy < 0) return 0; break;
+	case SNAKE_LEFT:  if (dx > 0) return 0; break;
+	case SNAKE_RIGHT: if (dx < 0) return 0; break;
+	};
+
+	return 1;
+}
+
 void Game_give_snake_direction(Game* game, int scancode)
 {
-	if      (game->snake.up == scancode)    game->snake.direction = SNAKE_UP;
-	else if (game->snake.down == scancode)  game->snake.direction = SNAKE_DOWN;
-	else if (game->snake.left == scancode)  game->snake.direction = SNAKE_LEFT;
-	else if (game->snake.right == scancode) game->snake.direction = SNAKE_RIGHT;
+	int direction = -1;
+
+	if      (game->snake.up == scancode)    direction = SNAKE_UP;
+	else if (game->snake.down == scancode)  direction = SNAKE_DOWN;
+	else if (game->snake.left == scancode)  direction = SNAKE_LEFT;
+	else if (game->snake.right == scancode) direction = SNAKE_RIGHT;
+
+	if (direction < 0) return;
+	if (!Game_snake_possible_to_move(game, direction)) return;
+
+	game->snake.direction = direction;
 }
 
 void Game_move_snake_cell(Game* game, SDL_Point* cell)

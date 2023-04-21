@@ -4,6 +4,8 @@
 
 #include "color.h"
 
+#define DEBUG_SHOW_FPS
+
 enum SNAKE_DIRECTION
 {
 	SNAKE_UP, SNAKE_DOWN, SNAKE_LEFT, SNAKE_RIGHT
