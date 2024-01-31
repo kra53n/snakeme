@@ -9,12 +9,14 @@ typedef struct State State;
 typedef enum StateKind
 {
 	StateKind_Menu,
+	StateKind_Game,
 };
 
 typedef struct State
 {
 	State* prv;
 	StateKind kind;
+	int exit;
 } State;
 
 typedef struct StateMachine

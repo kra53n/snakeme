@@ -14,7 +14,6 @@ typedef struct
 {
 	SDL_Window*   win;
 	SDL_Renderer* rer;
-	//int           run;
 	int           wait_restarting;
 	int           cell_size;
 	int           cell_offset;
@@ -25,4 +24,5 @@ typedef struct
 } Game;
 
 int Game_init(Game* game);
+int Game_uninit(Game* game);
 int Game_run(Game* game);

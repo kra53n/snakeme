@@ -22,6 +22,8 @@ void StateMachine_destroy(StateMachine* machine)
 
 State* StateMachine_pop(StateMachine* machine)
 {
+	if (StateMachine_empty(machine)) return;
+
 	State* buf = machine->head;
 	machine->head = machine->head->prv;
 	return buf;
@@ -38,6 +40,8 @@ void StateMachine_push(StateMachine* machine, State* state)
 
 	state->prv = machine->head;
 	machine->head = state;
+
+	StateMachine_enter(machine);
 }
 
 int StateMachine_empty(StateMachine* machine)
@@ -53,6 +57,8 @@ void StateMachine_enter(StateMachine* machine)
 	{
 	case StateKind_Menu:
 		MainMenuState_enter(machine);
+	case StateKind_Game:
+		//GameState_enter(machine);
 	default:
 		return;
 	}

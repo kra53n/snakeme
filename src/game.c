@@ -30,8 +30,6 @@ int Game_init(Game* game)
 	game->rer = SDL_CreateRenderer(game->win, -1, SDL_RENDERER_ACCELERATED);
 	if (!game->rer) return 1;
 
-	//game->run = 1;
-	//game->wait_restarting = 0;
 	game->cell_size = 40;
 	game->cell_offset = game->cell_size / 5;
 
