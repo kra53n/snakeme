@@ -14,7 +14,7 @@ typedef struct
 {
 	SDL_Window*   win;
 	SDL_Renderer* rer;
-	int           run;
+	//int           run;
 	int           wait_restarting;
 	int           cell_size;
 	int           cell_offset;
